@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citizenship Academy · The Apprentice Project</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --teal:#20B2AA;
+  --teal-light:#E6F7F6;
+  --yellow:#FFD54F;
+  --yellow-light:#FFFBEA;
+  --bg:#FAFAFA;
+  --card:#FFFFFF;
+  --text:#111827;
+  --sub:#6B7280;
+  --border:#E5E7EB;
+  --radius:16px;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:flex-start;
+  padding:20px 16px 60px;
+}
+.topbar{
+  width:100%;
+  max-width:700px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 0 28px;
+}
+.logo{font-size:14px;font-weight:600;color:var(--teal);letter-spacing:.5px}
+.logo span{color:var(--sub);font-weight:400}
+.progress-wrap{display:flex;align-items:center;gap:8px}
+.progress-bar{
+  width:80px;height:4px;
+  background:var(--border);
+  border-radius:99px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:var(--teal);
+  border-radius:99px;
+  transition:width .4s ease;
+}
+.progress-label{font-size:12px;color:var(--sub);font-weight:500}
+
+.card{
+  width:100%;
+  max-width:700px;
+  background:var(--card);
+  border-radius:24px;
+  padding:40px 36px;
+  box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 24px rgba(0,0,0,.05);
+  animation:fadeUp .35s ease both;
+}
+@media(max-width:480px){
+  .card{padding:28px 20px}
+}
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+.step-tag{
+  display:inline-block;
+  font-size:11px;font-weight:600;
+  letter-spacing:1px;text-transform:uppercase;
+  color:var(--teal);
+  background:var(--teal-light);
+  padding:4px 10px;border-radius:99px;
+  margin-bottom:20px;
+}
+
+.question-title{
+  font-size:clamp(20px,4vw,26px);
+  font-weight:700;
+  line-height:1.35;
+  color:var(--text);
+  margin-bottom:10px;
+}
+.question-sub{
+  font-size:15px;
+  color:var(--sub);
+  line-height:1.6;
+  margin-bottom:32px;
+}
+
+.options{display:flex;flex-direction:column;gap:12px;margin-bottom:32px}
+.option{
+  display:flex;align-items:center;gap:14px;
+  padding:16px 18px;
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  cursor:pointer;
+  transition:all .18s ease;
+  background:var(--card);
+  text-align:left;
+  width:100%;
+  position:relative;
+  overflow:hidden;
+}
+.option::before{
+  content:'';
+  position:absolute;inset:0;
+  background:var(--yellow);
+  opacity:0;
+  transition:opacity .18s ease;
+  z-index:0;
+}
+.option:hover::before{opacity:.07}
+.option.selected{
+  border-color:var(--yellow);
+  background:var(--yellow-light);
+}
+.option.selected::before{opacity:0}
+.option-letter{
+  width:32px;height:32px;min-width:32px;
+  border-radius:50%;
+  background:var(--bg);
+  border:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;color:var(--sub);
+  transition:all .18s;
+  position:relative;z-index:1;
+}
+.option.selected .option-letter{
+  background:var(--yellow);
+  border-color:var(--yellow);
+  color:#5A4000;
+}
+.option-text{
+  font-size:15px;
+  font-weight:500;
+  color:var(--text);
+  line-height:1.45;
+  position:relative;z-index:1;
+}
+
+.btn{
+  width:100%;
+  padding:16px 24px;
+  border:none;
+  border-radius:var(--radius);
+  font-family:inherit;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .18s ease;
+}
+.btn-primary{
+  background:var(--teal);
+  color:#fff;
+}
+.btn-primary:hover{background:#179e97;transform:translateY(-1px)}
+.btn-primary:disabled{background:var(--border);color:var(--sub);cursor:not-allowed;transform:none}
+
+.aspirations-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(148px,1fr));
+  gap:10px;
+  margin-bottom:28px;
+}
+.asp-chip{
+  padding:12px 14px;
+  border:2px solid var(--border);
+  border-radius:12px;
+  font-size:14px;font-weight:500;
+  cursor:pointer;
+  transition:all .18s;
+  text-align:center;
+  background:var(--card);
+  color:var(--text);
+  position:relative;
+}
+.asp-chip:hover{border-color:#c0c0c0}
+.asp-chip.selected{
+  border-color:var(--yellow);
+  background:var(--yellow-light);
+  color:#5A4000;
+}
+.asp-chip.disabled:not(.selected){
+  opacity:.4;cursor:not-allowed;
+}
+
+.cat-label{
+  font-size:11px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--sub);
+  margin:22px 0 10px;
+}
+
+.selected-count{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:13px;font-weight:500;color:var(--sub);
+  margin-bottom:20px;
+}
+.count-pill{
+  background:var(--yellow);
+  color:#5A4000;
+  padding:2px 8px;border-radius:99px;
+  font-size:12px;font-weight:700;
+}
+
+.results-section{animation:fadeUp .4s ease both}
+.match-card{
+  border:2px solid var(--border);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+}
+.match-card.top{border-color:var(--yellow);background:var(--yellow-light)}
+.match-rank{
+  font-size:11px;font-weight:700;letter-spacing:.8px;
+  text-transform:uppercase;color:var(--sub);
+  margin-bottom:6px;
+}
+.match-card.top .match-rank{color:#7a5500}
+.match-name{
+  font-size:22px;font-weight:700;color:var(--text);
+  margin-bottom:10px;
+}
+.match-bar-wrap{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.match-bar{flex:1;height:6px;background:var(--border);border-radius:99px;overflow:hidden}
+.match-fill{height:100%;border-radius:99px;background:var(--teal);transition:width 1s ease}
+.match-card.top .match-fill{background:var(--yellow)}
+.match-pct{font-size:15px;font-weight:700;color:var(--teal)}
+.match-card.top .match-pct{color:#7a5500}
+
+.insight-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-bottom:20px;
+}
+@media(max-width:480px){.insight-grid{grid-template-columns:1fr}}
+.insight-item{
+  background:var(--bg);
+  border-radius:12px;
+  padding:14px 16px;
+}
+.insight-label{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--sub);margin-bottom:4px}
+.insight-val{font-size:14px;font-weight:500;color:var(--text)}
+
+.warm-msg{
+  background:var(--yellow-light);
+  border:2px solid var(--yellow);
+  border-radius:var(--radius);
+  padding:22px 24px;
+  margin-bottom:20px;
+}
+.warm-msg-title{font-size:16px;font-weight:700;color:#7a5500;margin-bottom:8px}
+.warm-msg-body{font-size:15px;color:#5a4000;line-height:1.65}
+
+.trait-bar-list{margin-top:10px;display:flex;flex-direction:column;gap:10px}
+.trait-row{display:flex;flex-direction:column;gap:4px}
+.trait-top{display:flex;justify-content:space-between;align-items:center}
+.trait-name{font-size:13px;font-weight:500;color:var(--text)}
+.trait-pct-label{font-size:12px;font-weight:600;color:var(--sub)}
+.trait-track{height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.trait-fill{height:100%;background:var(--teal);border-radius:99px;transition:width 1.2s ease}
+
+.divider{height:1px;background:var(--border);margin:28px 0}
+.section-title{font-size:17px;font-weight:700;color:var(--text);margin-bottom:16px}
+
+.confidence-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:99px;
+  font-size:13px;font-weight:600;
+}
+.conf-high{background:#E6F7F6;color:var(--teal)}
+.conf-medium{background:#FFF8E1;color:#B45309}
+.conf-low{background:#FEF2F2;color:#DC2626}
+
+.restart-btn{
+  width:100%;margin-top:8px;
+  padding:14px;border-radius:var(--radius);
+  border:2px solid var(--border);
+  background:transparent;
+  font-family:inherit;font-size:14px;font-weight:600;
+  color:var(--sub);cursor:pointer;
+  transition:all .18s;
+}
+.restart-btn:hover{border-color:var(--teal);color:var(--teal)}
+
+.intro-hero{text-align:center;padding:10px 0 30px}
+.intro-hero h1{font-size:clamp(26px,5vw,36px);font-weight:700;line-height:1.25;margin-bottom:14px}
+.intro-hero h1 span{color:var(--teal)}
+.intro-hero p{font-size:16px;color:var(--sub);line-height:1.65;max-width:480px;margin:0 auto 28px}
+.intro-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--yellow-light);border:1.5px solid var(--yellow);
+  padding:7px 16px;border-radius:99px;
+  font-size:13px;font-weight:600;color:#7a5500;
+  margin-bottom:28px;
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">Citizenship Academy <span>· The Apprentice Project</span></div>
+  <div class="progress-wrap" id="progressWrap" style="display:none">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-label" id="progressLabel">0 / 15</div>
+  </div>
+</div>
+
+<div class="card" id="mainCard"></div>
+
+<script>
+const vectors = {
+  curiosity:50,creativity:50,leadership:50,empathy:50,risk:50,
+  logic:50,competitiveness:50,independence:50,discipline:50,
+  prestige:50,helping:50,status:50,analytical:50,social:50,
+  entrepreneurial:50,artistic:50,physical:50,innovation:50,
+  structure:50,adventure:50
+};
+
+const careers = {
+  "Software Engineer":      {logic:90,curiosity:85,analytical:85,creativity:60,independence:70,discipline:75,social:30,innovation:80,helping:40,leadership:45,risk:40,artistic:25,empathy:40},
+  "AI Engineer":            {logic:95,curiosity:95,analytical:90,creativity:70,independence:65,innovation:90,helping:45,leadership:40,risk:45,artistic:25,empathy:45,social:30},
+  "Data Scientist":         {logic:90,analytical:95,curiosity:90,creativity:60,independence:70,innovation:75,discipline:80,social:35,helping:40,artistic:20},
+  "Entrepreneur":           {leadership:95,risk:95,independence:95,creativity:80,innovation:90,prestige:80,status:85,entrepreneurial:100,social:65,helping:50,competitiveness:85},
+  "Doctor":                 {empathy:85,helping:95,discipline:90,logic:80,analytical:75,prestige:80,social:70,curiosity:70,risk:30,leadership:60},
+  "Surgeon":                {discipline:95,logic:90,empathy:75,helping:90,prestige:90,analytical:85,risk:60,curiosity:75,social:40},
+  "Psychologist":           {empathy:95,helping:95,curiosity:85,analytical:80,social:80,creativity:65,leadership:55,logic:75,artistic:40},
+  "Lawyer":                 {logic:90,competitiveness:85,prestige:85,leadership:70,analytical:85,social:75,discipline:80,risk:60,helping:60},
+  "Architect":              {creativity:90,analytical:80,artistic:85,logic:80,discipline:80,innovation:75,prestige:75,social:55},
+  "Designer":               {creativity:95,artistic:90,innovation:80,empathy:70,social:60,independence:70,logic:60,prestige:60},
+  "Graphic Designer":       {creativity:92,artistic:95,innovation:75,independence:65,empathy:65,social:55,logic:55},
+  "UI/UX Designer":         {creativity:88,empathy:85,analytical:75,artistic:80,innovation:80,logic:70,social:65},
+  "Teacher":                {empathy:90,helping:95,social:90,leadership:65,communication:90,discipline:70,creativity:65,logic:60,prestige:45},
+  "Journalist":             {curiosity:90,creativity:80,social:85,adventure:75,risk:70,competitiveness:70,helping:60,prestige:65,independence:70},
+  "Actor":                  {artistic:95,creativity:90,social:85,prestige:80,competitiveness:75,empathy:80,independence:60,risk:70},
+  "Filmmaker":              {creativity:95,artistic:90,leadership:70,innovation:80,prestige:75,social:65,independence:70,risk:65},
+  "Musician":               {artistic:95,creativity:90,discipline:75,independence:70,social:65,prestige:70,empathy:75,risk:65},
+  "Scientist":              {curiosity:95,analytical:90,logic:90,discipline:85,innovation:85,independence:75,helping:55,prestige:70,social:30},
+  "Researcher":             {curiosity:95,analytical:90,logic:85,discipline:90,independence:80,innovation:80,prestige:65,social:30},
+  "Engineer":               {logic:85,analytical:85,discipline:80,curiosity:80,innovation:75,creativity:65,helping:50,social:45},
+  "Civil Engineer":         {logic:80,analytical:80,discipline:85,creativity:60,helping:65,leadership:65,social:50,structure:80},
+  "Pilot":                  {discipline:90,adventure:85,risk:75,leadership:70,analytical:80,prestige:80,physical:60,competitiveness:65},
+  "Athlete":                {physical:95,discipline:90,competitiveness:95,leadership:65,risk:60,adventure:80,prestige:70,social:70},
+  "Chef":                   {creativity:85,artistic:80,discipline:80,leadership:65,innovation:75,social:70,empathy:65,helping:70},
+  "Photographer":           {artistic:90,creativity:88,adventure:75,independence:80,social:60,curiosity:80,innovation:65},
+  "Animator":               {creativity:90,artistic:88,innovation:80,discipline:75,curiosity:80,independence:65,logic:60},
+  "Content Creator":        {creativity:85,social:80,entrepreneurial:75,innovation:75,risk:65,prestige:70,independence:80,artistic:70},
+  "Civil Servant":          {helping:80,discipline:85,leadership:70,social:75,logic:70,prestige:70,structure:85,empathy:70},
+  "Politician":             {leadership:90,social:90,prestige:85,helping:75,competitiveness:80,status:85,risk:70,empathy:65},
+  "Financial Analyst":      {analytical:90,logic:85,discipline:80,curiosity:75,prestige:70,competitiveness:70,structure:75,social:45},
+  "Investor":               {risk:85,analytical:90,entrepreneurial:80,logic:85,independence:80,prestige:80,curiosity:80,competitiveness:85},
+  "Cybersecurity Specialist":{logic:90,analytical:85,curiosity:90,independence:75,discipline:75,innovation:80,adventure:55,risk:55},
+  "Game Developer":         {creativity:85,logic:80,analytical:75,innovation:80,curiosity:80,independence:65,artistic:70,discipline:70},
+  "App Developer":          {logic:85,analytical:80,creativity:70,innovation:75,discipline:75,independence:65,helping:50},
+  "Fitness Trainer":        {physical:90,helping:85,social:80,empathy:75,discipline:85,leadership:70,competitiveness:70},
+  "Event Manager":          {leadership:80,social:90,creativity:75,discipline:75,helping:70,entrepreneurial:65,prestige:60},
+  "Marketing Specialist":   {creativity:80,social:80,analytical:70,entrepreneurial:75,prestige:65,innovation:75,competitiveness:70},
+  "Writer":                 {creativity:90,artistic:85,independence:80,curiosity:85,discipline:75,empathy:75,social:40,analytical:60},
+  "Accountant":             {analytical:85,logic:85,discipline:90,structure:90,prestige:60,social:40,helping:50,risk:25},
+  "Astronaut":              {curiosity:95,discipline:95,risk:85,adventure:90,analytical:85,prestige:90,physical:75,innovation:85},
+  "Fashion Designer":       {creativity:92,artistic:92,independence:75,social:65,prestige:80,innovation:80,empathy:65},
+  "Hotel Manager":          {leadership:80,social:85,discipline:80,helping:80,empathy:75,creativity:60,entrepreneurial:65},
+  "Dancer":                 {artistic:92,physical:85,discipline:88,creativity:88,prestige:70,social:70,empathy:65},
+  "Singer":                 {artistic:90,creativity:85,social:75,prestige:80,discipline:80,empathy:70,adventure:60},
+};
+
+const careerCategories = {
+  "Medical & Health":["Doctor","Surgeon","Psychologist"],
+  "Science & Research":["Scientist","Researcher","AI Engineer","Data Scientist"],
+  "Technology":["Software Engineer","App Developer","Game Developer","Cybersecurity Specialist"],
+  "Creative & Arts":["Actor","Filmmaker","Musician","Singer","Dancer","Writer","Designer","Graphic Designer","UI/UX Designer","Photographer","Animator","Fashion Designer"],
+  "Business & Finance":["Entrepreneur","Financial Analyst","Investor","Accountant","Marketing Specialist","Content Creator"],
+  "Engineering & Architecture":["Engineer","Civil Engineer","Architect"],
+  "Law & Government":["Lawyer","Civil Servant","Politician"],
+  "Education & Social":["Teacher","Psychologist"],
+  "Sports & Fitness":["Athlete","Fitness Trainer"],
+  "Lifestyle & Services":["Chef","Event Manager","Hotel Manager"],
+  "Adventure & Exploration":["Pilot","Astronaut"],
+  "Media & Journalism":["Journalist","Content Creator","Writer"],
+};
+
+let state = {
+  phase: 'intro',
+  aspirations: [],
+  questionIndex: 0,
+  answers: [],
+  vectors: {...vectors},
+};
+
+const questionBank = [
+  {
+    id:'identity',
+    tag:'About You',
+    title:'When you imagine your best future self, what does that person do?',
+    sub:'Pick the one that feels most like "you".',
+    options:[
+      {text:'Create and make things the world hasn\'t seen before',traits:{creativity:18,artistic:14,innovation:16,independence:10}},
+      {text:'Help people through the hardest moments of their lives',traits:{empathy:18,helping:18,social:12,discipline:10}},
+      {text:'Build something big — a company, a movement, an idea',traits:{leadership:18,risk:16,entrepreneurial:18,prestige:14}},
+    ]
+  },
+  {
+    id:'character',
+    tag:'Your Nature',
+    title:'Ek purana Bollywood movie mein aap kaun hote?',
+    sub:'Honestly pick — not your favourite character, the one most like you.',
+    options:[
+      {text:'3 Idiots ka Rancho — curious, breaks rules, finds better ways',traits:{curiosity:18,innovation:16,independence:14,risk:12}},
+      {text:'Black ka Debraj Sahai — patient, gives everything to guide someone',traits:{empathy:18,helping:16,discipline:14,social:12}},
+      {text:'Guru ka Guru Bhai — ambitious, hustles, builds an empire from nothing',traits:{entrepreneurial:18,risk:16,leadership:16,prestige:14,status:12}},
+    ]
+  },
+  {
+    id:'energy',
+    tag:'Your Energy',
+    title:'If you had a completely free Saturday, what would you most likely end up doing?',
+    sub:'Be honest — not what you "should" do.',
+    options:[
+      {text:'Deep-diving a topic I\'m curious about — videos, books, experiments',traits:{curiosity:18,analytical:14,discipline:12,innovation:10}},
+      {text:'Spending time with friends, family, or helping someone solve a problem',traits:{social:18,empathy:16,helping:14}},
+      {text:'Working on a project or side idea I\'ve been planning',traits:{entrepreneurial:16,independence:16,creativity:14,risk:10}},
+    ]
+  },
+  {
+    id:'school',
+    tag:'School Memories',
+    title:'What felt best in school?',
+    sub:'That one moment where you felt totally in your element.',
+    options:[
+      {text:'Cracking a really hard problem — maths, science, puzzle',traits:{logic:18,analytical:16,discipline:14,curiosity:12}},
+      {text:'Being on stage — speech, drama, anchoring, dance',traits:{artistic:16,social:16,prestige:14,creativity:12}},
+      {text:'Leading the team — class president, captain, organiser',traits:{leadership:18,competitiveness:14,social:12,discipline:12}},
+    ]
+  },
+  {
+    id:'friend',
+    tag:'Among Friends',
+    title:'When your friends are in trouble, what do they usually come to you for?',
+    options:[
+      {text:'Practical advice and smart solutions',traits:{logic:14,analytical:14,leadership:12,discipline:10}},
+      {text:'Someone who listens without judging',traits:{empathy:18,helping:16,social:14}},
+      {text:'To think big and get motivated again',traits:{entrepreneurial:16,leadership:14,prestige:12,risk:10}},
+    ]
+  },
+  {
+    id:'movie_moment',
+    tag:'Movie Moment',
+    title:'Which movie scene gives you goosebumps every time?',
+    sub:'Pick the vibe, not the exact film.',
+    options:[
+      {text:'The scientist discovers something no one knew before — that "aha!" moment',traits:{curiosity:18,analytical:14,innovation:16,logic:12}},
+      {text:'The underdog works for years and finally wins on the biggest stage',traits:{discipline:16,competitiveness:16,physical:12,prestige:14}},
+      {text:'One person changes the life of someone who had given up hope',traits:{empathy:18,helping:16,social:12,artistic:10}},
+    ]
+  },
+  {
+    id:'frustration',
+    tag:'What Bugs You',
+    title:'What frustrates you the most in everyday life?',
+    options:[
+      {text:'Things that don\'t make sense or are badly organised',traits:{logic:16,structure:16,analytical:14,discipline:12}},
+      {text:'People being treated unfairly or left behind',traits:{empathy:18,helping:16,social:14}},
+      {text:'Big opportunities going to waste — no one taking action',traits:{entrepreneurial:16,risk:14,leadership:14,competitiveness:12}},
+    ]
+  },
+  {
+    id:'future_proud',
+    tag:'Future You',
+    title:'You\'re 40. What would make you genuinely proud?',
+    options:[
+      {text:'Mastering something so well that only a handful of people in the world can do it',traits:{discipline:16,curiosity:16,prestige:14,analytical:12}},
+      {text:'Building an organisation or company that changes how people live',traits:{entrepreneurial:18,leadership:16,risk:14,prestige:14,status:14}},
+      {text:'Knowing that because of you, thousands of people had better lives',traits:{helping:18,empathy:16,social:14,discipline:12}},
+    ]
+  },
+  {
+    id:'work_style',
+    tag:'How You Work',
+    title:'How do you love to work?',
+    options:[
+      {text:'Alone with deep focus — no interruptions, just flow',traits:{independence:18,discipline:16,analytical:12,curiosity:12}},
+      {text:'Bouncing ideas with a team — energy, collaboration, discussion',traits:{social:18,leadership:12,entrepreneurial:10,creativity:12}},
+      {text:'Leading — giving direction, solving problems, making calls',traits:{leadership:18,competitiveness:14,discipline:12,prestige:12}},
+    ]
+  },
+  {
+    id:'risk',
+    tag:'Your Comfort Zone',
+    title:'A once-in-a-lifetime opportunity comes but it has no guarantee of success. What do you do?',
+    options:[
+      {text:'Jump in — the risk is part of the excitement',traits:{risk:20,adventure:16,entrepreneurial:14,independence:12}},
+      {text:'Plan carefully first, then decide',traits:{analytical:16,discipline:16,logic:14,structure:12}},
+      {text:'Only if I can help others through it — purpose matters more than the thrill',traits:{helping:16,empathy:14,discipline:12,social:12}},
+    ]
+  },
+  {
+    id:'learning',
+    tag:'Learning Style',
+    title:'How do you learn best?',
+    options:[
+      {text:'Reading, researching, experimenting — figuring things out myself',traits:{curiosity:18,independence:16,analytical:14,discipline:12}},
+      {text:'Watching someone experienced and then practising',traits:{discipline:16,helping:10,social:12,structure:14}},
+      {text:'Learning by doing — just start and adjust as I go',traits:{risk:16,entrepreneurial:14,innovation:14,adventure:12}},
+    ]
+  },
+  {
+    id:'stress',
+    tag:'Under Pressure',
+    title:'When things get very stressful, what helps you most?',
+    options:[
+      {text:'Breaking the problem into small pieces and solving step by step',traits:{analytical:16,logic:16,discipline:14,structure:12}},
+      {text:'Talking to someone I trust and processing it together',traits:{social:18,empathy:16,helping:12}},
+      {text:'Taking a break and then coming back with a fresh big-picture view',traits:{independence:14,creativity:14,innovation:12,adventure:10}},
+    ]
+  },
+  {
+    id:'song',
+    tag:'Your Anthem',
+    title:'Which type of song is on repeat when you\'re working or studying?',
+    options:[
+      {text:'Intense background music — no words, pure concentration',traits:{discipline:16,analytical:14,logic:12,independence:14}},
+      {text:'Soulful songs that make you feel deeply',traits:{empathy:16,artistic:16,creativity:14,helping:10}},
+      {text:'High-energy tracks that make you want to conquer something',traits:{competitiveness:18,risk:14,physical:12,prestige:12}},
+    ]
+  },
+  {
+    id:'purpose',
+    tag:'Your Why',
+    title:'Deep down, what would make your life feel truly meaningful?',
+    options:[
+      {text:'Knowing that something I created or discovered changed the world',traits:{innovation:18,prestige:16,curiosity:14,creativity:14}},
+      {text:'Earning real respect and building a legacy that lasts',traits:{prestige:18,status:16,leadership:14,discipline:14}},
+      {text:'Every day knowing I genuinely made someone\'s life better',traits:{helping:20,empathy:18,social:14,discipline:12}},
+    ]
+  },
+  {
+    id:'final',
+    tag:'Almost There',
+    title:'Your closest friend describes you in one sentence. Which one fits?',
+    sub:'Pick the one that makes you smile and nod.',
+    options:[
+      {text:'"You\'re the most curious person I know — you never stop asking why."',traits:{curiosity:18,analytical:14,innovation:14,independence:12}},
+      {text:'"You\'re the one everyone calls when they need real support."',traits:{empathy:18,helping:18,social:16,discipline:10}},
+      {text:'"You\'re going to run the world someday — I\'ve always known it."',traits:{leadership:18,entrepreneurial:16,prestige:16,risk:14,status:14}},
+    ]
+  },
+];
+
+function applyTraits(traits){
+  for(const[k,v] of Object.entries(traits)){
+    if(state.vectors[k] !== undefined){
+      state.vectors[k] = Math.min(100,Math.max(0,state.vectors[k]+v));
+    }
+  }
+}
+
+function scoreCareer(profile){
+  const keys = Object.keys(profile);
+  let total=0,score=0;
+  for(const k of keys){
+    const w = profile[k]/100;
+    const v = (state.vectors[k]||50)/100;
+    score += w*v;
+    total += w;
+  }
+  return total>0 ? Math.round((score/total)*100) : 50;
+}
+
+function getTopCareers(){
+  const scores = Object.entries(careers).map(([name,profile])=>{
+    return {name, score:scoreCareer(profile)};
+  });
+  scores.sort((a,b)=>b.score-a.score);
+  const top = scores.slice(0,3);
+  const norm = top[0].score;
+  return top.map(c=>({...c, pct:Math.round(85 + (c.score/norm)*14)}));
+}
+
+function getInsights(){
+  const v = state.vectors;
+  const traits = Object.entries(v).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  
+  let workStyle = v.independence>65 ? 'Independent deep work' : v.social>65 ? 'Collaborative team work' : 'Balanced — solo & team';
+  let learnStyle = v.curiosity>70 ? 'Self-driven research' : v.discipline>70 ? 'Structured practice' : 'Hands-on experimentation';
+  let decisionStyle = v.analytical>70 ? 'Data and logic first' : v.risk>70 ? 'Bold and intuitive' : 'Thoughtful and deliberate';
+  let motivation = v.helping>70 ? 'Making a difference' : v.prestige>70 ? 'Building a legacy' : v.entrepreneurial>70 ? 'Creating something new' : 'Mastering a craft';
+  let energy = v.social>65 ? 'Energised by people' : 'Energised by solitude';
+  let strength = traits[0][0].charAt(0).toUpperCase()+traits[0][0].slice(1);
+
+  return {workStyle,learnStyle,decisionStyle,motivation,energy,strength,traits};
+}
+
+function getConfidence(){
+  const a = state.answers;
+  if(a.length<8) return 'medium';
+  const traitSets = a.map(ans=>ans.traits);
+  let consistency = 0;
+  for(let i=0;i<traitSets.length-1;i++){
+    const k1 = Object.keys(traitSets[i]);
+    const k2 = Object.keys(traitSets[i+1]);
+    const overlap = k1.filter(k=>k2.includes(k)).length;
+    consistency += overlap/(Math.max(k1.length,k2.length));
+  }
+  const avg = consistency/(traitSets.length-1);
+  if(avg>0.5) return 'high';
+  if(avg>0.3) return 'medium';
+  return 'low';
+}
+
+function getWarmMessage(topCareer, insights){
+  const name = topCareer.name;
+  const motiv = insights.motivation;
+  const work = insights.workStyle;
+
+  const msgs = {
+    default:`You've done something many people never do — you stopped and honestly asked yourself who you really are. That takes courage. Your answers reveal someone with a clear inner drive and a real sense of purpose. The path ahead won't always be easy, but the fact that you know what matters to you is already your biggest advantage. Keep going — your best chapter hasn't been written yet.`,
+    'AI Engineer':`You think in systems. You love understanding how things work at a deep level, and you're not satisfied with surface answers. That relentless curiosity and love for logic is exactly what the world of AI and data needs right now. You have the rare combination of analytical precision and creative thinking. Wherever you go — the problems you'll solve will matter.`,
+    'Entrepreneur':`You don't just want to succeed — you want to build. You see opportunities where others see obstacles, and you're willing to take real risks to make things happen. That spirit is rare and powerful. The road of entrepreneurship is hard, but people like you don't just adapt to the world — they change it. Start small, think big, and never stop.`,
+    'Doctor':`You feel things deeply. When someone is suffering, you don't look away — you want to help. That's not a skill you can teach. Combined with your discipline and desire to understand the human body and mind, you have the heart of a healer. Medicine is one of the hardest paths, but the most meaningful. People will trust you with their lives — and you'll be worthy of that trust.`,
+    'Teacher':`You have a gift that not everyone sees in themselves — the ability to make others feel understood and capable. Teaching is not just a profession for you; it's who you are. You light up when you help someone "get it." The impact you'll have on young minds will ripple for generations. That is not small — that is everything.`,
+    'Designer':`You see the world differently. Where others see a product or a page, you see a feeling, an experience, a story. Your creativity isn't just talent — it's your way of thinking. Design is how you communicate and connect. In a world full of noise, your eye for beauty and meaning will make you unforgettable.`,
+    'Lawyer':`You have a razor-sharp mind and a deep sense of what's right. You argue not to win — but because justice matters to you. The legal field needs people who are both analytically brilliant and morally grounded. You're both. Wherever you practice law, you'll be the kind of person people trust to stand in their corner when it really counts.`,
+    'Scientist':`You were born asking "why." The world makes sense to you through evidence, curiosity, and patient inquiry. Research is not boring to you — it's thrilling. You're comfortable with uncertainty because you know that's where discovery lives. The questions you choose to chase may one day change what humanity knows about the universe.`,
+    'Filmmaker':`You think in stories. You feel the world through images, music, and human truth. Filmmaking is not just a career for you — it's the most honest way you express who you are and what you believe. The camera is your language. And when you use it well, you can move people in ways that words alone never could.`,
+    'Athlete':`You know what it feels like to push past the point where most people stop. That discipline, that fire, that need to test your limits — it defines you. Whether you compete at the highest level or inspire the next generation, your physical dedication and mental toughness will take you places most people only dream of.`,
+  };
+
+  return msgs[name] || msgs.default;
+}
+
+function render(){
+  const card = document.getElementById('mainCard');
+  if(state.phase==='intro') renderIntro(card);
+  else if(state.phase==='aspirations') renderAspirations(card);
+  else if(state.phase==='question') renderQuestion(card);
+  else if(state.phase==='results') renderResults(card);
+}
+
+function renderIntro(card){
+  document.getElementById('progressWrap').style.display='none';
+  card.innerHTML=`
+    <div class="intro-hero">
+      <div class="intro-badge">✦ Free · Takes 5 minutes</div>
+      <h1>Discover your <span>perfect career</span> with 15 smart questions</h1>
+      <p>Not a boring quiz. An intelligent conversation that understands you — and tells you the truth about where you belong.</p>
+    </div>
+    <div style="background:var(--yellow-light);border-radius:14px;padding:18px 20px;margin-bottom:28px;border:1.5px solid var(--yellow)">
+      <div style="font-size:13px;font-weight:700;color:#7a5500;margin-bottom:8px">HOW IT WORKS</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:26px;height:26px;min-width:26px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5A4000">1</div>
+          <div style="font-size:14px;color:#5a4000;line-height:1.5">Pick 3 careers that excite you — this tells us what you dream about</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:26px;height:26px;min-width:26px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5A4000">2</div>
+          <div style="font-size:14px;color:#5a4000;line-height:1.5">Answer 15 real-life questions — no career jargon, just honest choices</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div style="width:26px;height:26px;min-width:26px;background:var(--yellow);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#5A4000">3</div>
+          <div style="font-size:14px;color:#5a4000;line-height:1.5">Get your top 3 career matches with a personalised message just for you</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-primary" onclick="startAspirations()">Let's find your path →</button>
+  `;
+}
+
+function startAspirations(){
+  state.phase='aspirations';
+  render();
+}
+
+function renderAspirations(card){
+  document.getElementById('progressWrap').style.display='none';
+  const sel = state.aspirations;
+  const allCareers = Object.values(careerCategories).flat();
+  const unique = [...new Set(allCareers)];
+
+  let html = `
+    <div class="step-tag">Step 1 of 2 · Dream Big</div>
+    <div class="question-title">If nothing could stop you — who would you become?</div>
+    <div class="question-sub">Pick exactly <strong>3 careers</strong> that feel exciting. Not what you're good at now — what sounds meaningful.</div>
+    <div class="selected-count">Selected: <span class="count-pill" id="aspCount">${sel.length}</span> / 3</div>
+  `;
+
+  for(const [cat, careers2] of Object.entries(careerCategories)){
+    html += `<div class="cat-label">${cat}</div><div class="aspirations-grid">`;
+    for(const c of careers2){
+      const isSel = sel.includes(c);
+      const isDisabled = sel.length>=3 && !isSel;
+      html += `<button class="asp-chip${isSel?' selected':''}${isDisabled?' disabled':''}" onclick="toggleAspiration('${c}')">${c}</button>`;
+    }
+    html += `</div>`;
+  }
+
+  html += `<div style="margin-top:28px"><button class="btn btn-primary" id="aspBtn" onclick="finaliseAspirations()" ${sel.length<3?'disabled':''}>Continue →</button></div>`;
+  card.innerHTML = html;
+}
+
+function toggleAspiration(career){
+  const i = state.aspirations.indexOf(career);
+  if(i>-1){
+    state.aspirations.splice(i,1);
+  } else {
+    if(state.aspirations.length>=3) return;
+    state.aspirations.push(career);
+  }
+  state.aspirations.forEach(asp=>{
+    const profile = careers[asp];
+    if(profile){
+      for(const[k,v] of Object.entries(profile)){
+        if(state.vectors[k]!==undefined) state.vectors[k] = Math.min(100,state.vectors[k]+(v*0.1));
+      }
+    }
+  });
+  renderAspirations(document.getElementById('mainCard'));
+}
+
+function finaliseAspirations(){
+  state.phase='question';
+  state.questionIndex=0;
+  render();
+}
+
+function getQuestion(index){
+  return questionBank[Math.min(index,questionBank.length-1)];
+}
+
+function renderQuestion(card){
+  const pw = document.getElementById('progressWrap');
+  pw.style.display='flex';
+  const total = questionBank.length;
+  const pct = Math.round((state.questionIndex/total)*100);
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('progressLabel').textContent=`${state.questionIndex} / ${total}`;
+
+  const q = getQuestion(state.questionIndex);
+  let html = `
+    <div class="step-tag">${q.tag}</div>
+    <div class="question-title">${q.title}</div>
+    ${q.sub?`<div class="question-sub">${q.sub}</div>`:''}
+    <div class="options" id="optionsList">
+  `;
+  const letters = ['A','B','C'];
+  q.options.forEach((opt,i)=>{
+    html+=`
+      <button class="option" onclick="selectOption(${i})" id="opt_${i}">
+        <div class="option-letter">${letters[i]}</div>
+        <div class="option-text">${opt.text}</div>
+      </button>
+    `;
+  });
+  html+=`</div>`;
+  html+=`<button class="btn btn-primary" id="continueBtn" onclick="nextQuestion()" disabled>Continue →</button>`;
+  card.innerHTML=html;
+  state._selectedOption=null;
+}
+
+function selectOption(idx){
+  state._selectedOption=idx;
+  document.querySelectorAll('.option').forEach((el,i)=>{
+    el.classList.toggle('selected',i===idx);
+  });
+  document.getElementById('continueBtn').disabled=false;
+}
+
+function nextQuestion(){
+  if(state._selectedOption===null) return;
+  const q = getQuestion(state.questionIndex);
+  const chosen = q.options[state._selectedOption];
+  applyTraits(chosen.traits);
+  state.answers.push({qid:q.id, optionIndex:state._selectedOption, traits:chosen.traits});
+  state.questionIndex++;
+  if(state.questionIndex>=questionBank.length){
+    state.phase='results';
+  }
+  render();
+}
+
+function renderResults(card){
+  const pw = document.getElementById('progressWrap');
+  pw.style.display='flex';
+  document.getElementById('progressFill').style.width='100%';
+  document.getElementById('progressLabel').textContent='Done!';
+
+  const top = getTopCareers();
+  const insights = getInsights();
+  const conf = getConfidence();
+  const warm = getWarmMessage(top[0], insights);
+  const confLabel = conf==='high'?'High Confidence':conf==='medium'?'Medium Confidence':'Building Confidence';
+  const confClass = conf==='high'?'conf-high':conf==='medium'?'conf-medium':'conf-low';
+
+  const rankLabels = ['🥇 Top Match','🥈 Second Match','🥉 Third Match'];
+  const topTraits = insights.traits.slice(0,5);
+
+  let matchHtml = '';
+  top.forEach((c,i)=>{
+    matchHtml+=`
+      <div class="match-card${i===0?' top':''}">
+        <div class="match-rank">${rankLabels[i]}</div>
+        <div class="match-name">${c.name}</div>
+        <div class="match-bar-wrap">
+          <div class="match-bar"><div class="match-fill" style="width:0%" data-target="${c.pct}"></div></div>
+          <div class="match-pct">${c.pct}%</div>
+        </div>
+      </div>
+    `;
+  });
+
+  let traitHtml = '';
+  topTraits.forEach(([k,v])=>{
+    const label = k.charAt(0).toUpperCase()+k.slice(1);
+    traitHtml+=`
+      <div class="trait-row">
+        <div class="trait-top">
+          <div class="trait-name">${label}</div>
+          <div class="trait-pct-label">${Math.round(v)}%</div>
+        </div>
+        <div class="trait-track"><div class="trait-fill" style="width:0%" data-target="${Math.round(v)}"></div></div>
+      </div>
+    `;
+  });
+
+  card.innerHTML=`
+    <div class="results-section">
+      <div class="step-tag">Your Results</div>
+      <div class="question-title" style="margin-bottom:6px">Your Career Matches</div>
+      <div class="question-sub" style="margin-bottom:24px">Based on 15 questions and 20 personality dimensions</div>
+
+      ${matchHtml}
+
+      <div class="divider"></div>
+
+      <div class="warm-msg">
+        <div class="warm-msg-title">✦ A personal message for you</div>
+        <div class="warm-msg-body">${warm}</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Your Personality Profile</div>
+      <div class="trait-bar-list">${traitHtml}</div>
+
+      <div class="divider"></div>
+
+      <div class="section-title">Student Insights</div>
+      <div class="insight-grid">
+        <div class="insight-item">
+          <div class="insight-label">Work Style</div>
+          <div class="insight-val">${insights.workStyle}</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-label">Learning Style</div>
+          <div class="insight-val">${insights.learnStyle}</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-label">Decision Style</div>
+          <div class="insight-val">${insights.decisionStyle}</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-label">Core Motivation</div>
+          <div class="insight-val">${insights.motivation}</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-label">Social Energy</div>
+          <div class="insight-val">${insights.energy}</div>
+        </div>
+        <div class="insight-item">
+          <div class="insight-label">Top Strength</div>
+          <div class="insight-val">${insights.strength}</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+        <div class="section-title" style="margin-bottom:0">Result Confidence</div>
+        <div class="confidence-badge ${confClass}">${confLabel}</div>
+      </div>
+
+      <button class="btn btn-primary" onclick="restart()">Try Again →</button>
+      <button class="restart-btn" onclick="restart()">Start Fresh</button>
+    </div>
+  `;
+
+  setTimeout(()=>{
+    document.querySelectorAll('[data-target]').forEach(el=>{
+      el.style.width = el.dataset.target + '%';
+    });
+  },100);
+}
+
+function restart(){
+  state={
+    phase:'intro',
+    aspirations:[],
+    questionIndex:0,
+    answers:[],
+    vectors:{...vectors},
+  };
+  document.getElementById('progressWrap').style.display='none';
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
